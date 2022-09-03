@@ -1,16 +1,12 @@
 package me.arthed.walljump.handlers;
 
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.Association;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -18,10 +14,8 @@ import com.sk89q.worldguard.protection.association.Associables;
 import com.sk89q.worldguard.protection.association.RegionAssociable;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-
 import me.arthed.walljump.WallJump;
 
 public class WorldGuardHandler {

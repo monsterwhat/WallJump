@@ -3,6 +3,7 @@ package me.arthed.walljump.api.events;
 import me.arthed.walljump.player.WPlayer;
 import org.jetbrains.annotations.NotNull;
 
+
 public class WallJumpEndEvent extends WallJumpEvent {
 
     private double horizontalPower;

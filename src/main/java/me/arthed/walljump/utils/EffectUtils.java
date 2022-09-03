@@ -30,14 +30,14 @@ public class EffectUtils {
                 data);
     }
 
-    public static void playWallJumpSound(Player player, WallFace facing, float volume, float pitch) {
-        player.getWorld().playSound(
-                player.getLocation(),
-                NmsUtils.getStepSoundForBlock(
-                        LocationUtils.getBlockPlayerIsStuckOn(player, facing)),
-                volume,
-                pitch
-        );
-    }
+//    public static void playWallJumpSound(Player player, WallFace facing, float volume, float pitch) {
+//        player.getWorld().playSound(
+//                player.getLocation(),
+//                NmsUtils.getStepSoundForBlock(
+//                        LocationUtils.getBlockPlayerIsStuckOn(player, facing)),
+//                volume,
+//                pitch
+//        );
+//    }
 
 }

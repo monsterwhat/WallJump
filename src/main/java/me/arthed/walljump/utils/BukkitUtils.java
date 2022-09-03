@@ -1,9 +1,6 @@
 package me.arthed.walljump.utils;
 
-import me.arthed.walljump.WallJump;
 import org.bukkit.Bukkit;
-import org.bukkit.block.data.type.Wall;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +14,7 @@ public class BukkitUtils {
         if(matcher.find()) {
             return matcher.group().replace("MC: ", "");
         }
-        return "1.8";
+        return "1.19";
     }
 
     public static boolean isVersionBefore(Version version) {
@@ -52,7 +49,9 @@ public class BukkitUtils {
         V1_14(14),
         V1_15(15),
         V1_16(16),
-        V1_17(17);
+        V1_17(17),
+        V1_18(18),
+        V1_19(19);
 
         public final int versionInt;
 

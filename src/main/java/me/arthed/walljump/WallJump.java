@@ -9,45 +9,41 @@ import me.arthed.walljump.handlers.WorldGuardHandler;
 import me.arthed.walljump.listeners.*;
 import me.arthed.walljump.player.PlayerManager;
 import me.arthed.walljump.player.WPlayer;
-import me.arthed.walljump.utils.AntiCheatUtils;
-import me.arthed.walljump.utils.BukkitUtils;
-import me.arthed.walljump.utils.UpdateChecker;
-import me.vagdedes.spartan.api.API;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
 public final class WallJump extends JavaPlugin {
 
     private static WallJump plugin;
+    private WallJumpAPI api;
+    private PlayerManager playerManager;
+    private WallJumpConfiguration config;
+    private WallJumpConfiguration dataConfig;
+    private WorldGuardHandler worldGuard;
+
     public static WallJump getInstance() {
         return plugin;
     }
 
-    private WallJumpAPI api;
     public WallJumpAPI getAPI() {
         return api;
     }
 
-    private PlayerManager playerManager;
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
 
-    private WallJumpConfiguration config;
     public WallJumpConfiguration getWallJumpConfig() {
         return config;
     }
 
-    private WallJumpConfiguration dataConfig;
     public WallJumpConfiguration getDataConfig() {
         return dataConfig;
     }
 
-    private WorldGuardHandler worldGuard;
     public WorldGuardHandler getWorldGuardHandler() {
         return worldGuard;
     }
@@ -67,18 +63,18 @@ public final class WallJump extends JavaPlugin {
         this.getCommand("walljump").setExecutor(new WallJumpCommand());
 
         //in case the plugin has been loaded while the server is running using plugman or any other similar methods, register all the online players
-        for(Player player : Bukkit.getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             playerManager.registerPlayer(player);
         }
 
-        new BStats(this, 10126);
+        BStats bStats = new BStats(this, 10126);
 
-        UpdateChecker updateChecker = new UpdateChecker(this);
-        if(!config.getBoolean("ignoreUpdates"))
-            updateChecker.checkUpdates();
+        //UpdateChecker updateChecker = new UpdateChecker(this);
+//        if (!config.getBoolean("ignoreUpdates")) {
+//            updateChecker.checkUpdates();
+//        }
 
-        new AntiCheatUtils();
-
+        //new AntiCheatUtils();
         api = new WallJumpAPI();
     }
 
@@ -89,14 +85,14 @@ public final class WallJump extends JavaPlugin {
         dataConfig = new WallJumpConfiguration("data.yml");
 
         Plugin worldGuardPlugin = getServer().getPluginManager().getPlugin("WorldGuard");
-        if(worldGuardPlugin != null) {
+        if (worldGuardPlugin != null) {
             worldGuard = new WorldGuardHandler(worldGuardPlugin, this);
         }
     }
 
     @Override
     public void onDisable() {
-        if(config.getBoolean("toggleCommand")) {
+        if (config.getBoolean("toggleCommand")) {
             for (WPlayer wplayer : playerManager.getWPlayers()) {
                 dataConfig.set(wplayer.getPlayer().getUniqueId().toString(), wplayer.enabled);
             }
@@ -105,7 +101,7 @@ public final class WallJump extends JavaPlugin {
     }
 
     private void registerEvents(Listener... listeners) {
-        for(Listener listener : listeners) {
+        for (Listener listener : listeners) {
             Bukkit.getPluginManager().registerEvents(listener, this);
         }
     }

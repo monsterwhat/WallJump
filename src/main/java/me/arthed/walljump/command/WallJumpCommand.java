@@ -2,7 +2,6 @@ package me.arthed.walljump.command;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import me.arthed.walljump.config.WallJumpConfiguration;
 import me.arthed.walljump.player.WPlayer;
 import org.bukkit.ChatColor;
@@ -10,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-
 import me.arthed.walljump.WallJump;
 import org.bukkit.entity.Player;
 

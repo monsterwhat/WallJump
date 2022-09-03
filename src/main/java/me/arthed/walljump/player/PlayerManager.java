@@ -3,7 +3,6 @@ package me.arthed.walljump.player;
 import me.arthed.walljump.WallJump;
 import me.arthed.walljump.config.WallJumpConfiguration;
 import org.bukkit.entity.Player;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

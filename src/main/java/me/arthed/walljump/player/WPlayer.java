@@ -60,10 +60,10 @@ public class WPlayer {
             remainingJumps--;
 
         //Stop some anti cheat checks that might be caused by wall-jumping
-        AntiCheatUtils.stopPotentialAntiCheatChecks(player);
+        //AntiCheatUtils.stopPotentialAntiCheatChecks(player);
 
         //play sound and spawn particles
-        EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
+        //EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
         EffectUtils.spawnSlidingParticles(player, 5, lastFacing);
 
         //stop the player from falling and moving while on the wall
@@ -85,7 +85,7 @@ public class WPlayer {
                     }
                     if (lastJumpLocation.getY() - player.getLocation().getY() >= 1.2) {
                         lastJumpLocation = player.getLocation();
-                        EffectUtils.playWallJumpSound(player, lastFacing, 0.2f, 0.6f);
+                        //EffectUtils.playWallJumpSound(player, lastFacing, 0.2f, 0.6f);
                     }
                 }
             }
@@ -117,7 +117,7 @@ public class WPlayer {
     }
 
     public void onWallJumpEnd(boolean jump) {
-        AntiCheatUtils.restartPotentialAntiCheatChecks(player);
+        //AntiCheatUtils.restartPotentialAntiCheatChecks(player);
 
         onWall = false;
         sliding = false;

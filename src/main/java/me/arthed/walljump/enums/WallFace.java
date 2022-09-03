@@ -9,11 +9,9 @@ public enum WallFace {
     WEST(-1, 0, 0, 1.42f),
     EAST(1, 0, 0, 0.42f);
 
-
     public final int xOffset;
     public final int yOffset;
     public final int zOffset;
-
     public final float distance;
 
     WallFace(int xOffset, int yOffset, int zOffset, float distance) {
@@ -24,16 +22,12 @@ public enum WallFace {
     }
 
     public static WallFace fromBlockFace(BlockFace blockFace) {
-        switch (blockFace) {
-            case NORTH:
-                return NORTH;
-            case SOUTH:
-                return SOUTH;
-            case WEST:
-                return WEST;
-            default: //EAST
-                return EAST;
-        }
+        return switch (blockFace) {
+            case NORTH -> NORTH;
+            case SOUTH -> SOUTH;
+            case WEST -> WEST;
+            default -> EAST;
+        }; //EAST
     }
 
 }
