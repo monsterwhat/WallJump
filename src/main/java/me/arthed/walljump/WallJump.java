@@ -3,7 +3,6 @@ package me.arthed.walljump;
 import me.arthed.walljump.api.WallJumpAPI;
 import me.arthed.walljump.command.WallJumpCommand;
 import me.arthed.walljump.config.WallJumpConfiguration;
-import me.arthed.walljump.handlers.BStats;
 import me.arthed.walljump.handlers.OtherPluginsHandler;
 import me.arthed.walljump.handlers.WorldGuardHandler;
 import me.arthed.walljump.listeners.*;
@@ -14,15 +13,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import java.util.Objects;
 
 public final class WallJump extends JavaPlugin {
 
     private static WallJump plugin;
-    private WallJumpAPI api;
+    private final WallJumpAPI api;
     private PlayerManager playerManager;
     private WallJumpConfiguration config;
     private WallJumpConfiguration dataConfig;
     private WorldGuardHandler worldGuard;
+
+    public WallJump() {
+        api = new WallJumpAPI();
+    }
 
     public static WallJump getInstance() {
         return plugin;
@@ -60,22 +64,13 @@ public final class WallJump extends JavaPlugin {
                 new OtherPluginsHandler()
         );
 
-        this.getCommand("walljump").setExecutor(new WallJumpCommand());
+        Objects.requireNonNull(this.getCommand("walljump")).setExecutor(new WallJumpCommand());
 
         //in case the plugin has been loaded while the server is running using plugman or any other similar methods, register all the online players
         for (Player player : Bukkit.getOnlinePlayers()) {
             playerManager.registerPlayer(player);
         }
 
-        BStats bStats = new BStats(this, 10126);
-
-        //UpdateChecker updateChecker = new UpdateChecker(this);
-//        if (!config.getBoolean("ignoreUpdates")) {
-//            updateChecker.checkUpdates();
-//        }
-
-        //new AntiCheatUtils();
-        api = new WallJumpAPI();
     }
 
     @Override

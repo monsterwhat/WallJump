@@ -20,7 +20,6 @@ public class LocationUtils {
             else
                 return  Math.abs(location.getZ() - block.getZ()) < distanceLimit;
         }
-
         return false;
     }
 
@@ -55,6 +54,4 @@ public class LocationUtils {
             return WallFace.NORTH;
         }
     }
-
-
 }

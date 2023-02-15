@@ -136,7 +136,7 @@ public class WorldGuardHandler {
                     Class<?> vectorClass = Class.forName("com.sk89q.worldedit.math.BlockVector3");
                     vectorConstructorAsAMethodBecauseWhyNot = vectorClass.getMethod("at", Double.TYPE, Double.TYPE, Double.TYPE);
                     regionManagerGetMethod = RegionManager.class.getMethod("getApplicableRegions", vectorClass);
-                } catch (Exception sodonewiththis) {
+                } catch (Exception error) {
                     owningPlugin.getLogger().log(Level.WARNING, "Failed to bind to WorldGuard (no Vector class?), integration will not work!", ex);
                     regionContainer = null;
                     return;
@@ -170,7 +170,7 @@ public class WorldGuardHandler {
         RegionManager regionManager = getRegionManager(location.getWorld());
         if (regionManager == null) return null;
         // The Location version of this method is gone in 7.0
-        // Oh and then they also randomly changed the Vector class at some point without even a version bump.
+        // Oh, and then they also randomly changed the Vector class at some point without even a version bump.
         // So awesome!
         try {
             Object vector = vectorConstructorAsAMethodBecauseWhyNot == null

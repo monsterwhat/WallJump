@@ -17,23 +17,18 @@ import org.bukkit.util.Vector;
 public class WPlayer {
 
     private final Player player;
-
     private boolean wallJumping;
     private boolean onWall;
     private boolean sliding;
-
     private WallFace lastFacing;
     private Location lastJumpLocation;
     private int remainingJumps = -1;
-
     private BukkitTask velocityTask;
     private BukkitTask fallTask;
     private float velocityY;
     private BukkitTask stopWallJumpingTask;
-
     private final WallJumpConfiguration config;
     private final WorldGuardHandler worldGuard;
-
     public boolean enabled = true;
 
     protected WPlayer(Player player) {
@@ -139,7 +134,7 @@ public class WPlayer {
                     event.getHorizontalPower(),
                     event.getVerticalPower());
 
-        //after 1.5 seconds, if the player hasn't wall jumped again, reset everything
+        //after 1.5 seconds, if the player hasn't walled jumped again, reset everything
         Bukkit.getScheduler().runTaskLaterAsynchronously(WallJump.getInstance(), () -> {
             if(LocationUtils.isOnGround(player)) {
                 reset();
@@ -174,7 +169,7 @@ public class WPlayer {
             lastJumpLocation.setY(player.getLocation().getY());
         if(
                         !enabled ||
-                        onWall || //player is already stuck to an wall
+                        onWall || //player is already stuck to a wall
                         remainingJumps == 0 || //player reached jump limit
                         (lastFacing != null && lastFacing.equals(facing)) || //player is facing the same direction as the last jump
                         (lastJumpLocation != null && player.getLocation().distance(lastJumpLocation) <= config.getDouble("minimumDistance")) ||  //player is too close to the last jump location
@@ -200,11 +195,8 @@ public class WPlayer {
         boolean inBlacklistedWorld = config.getWorldList("blacklistedWorlds").contains(
                 player.getWorld());
         boolean reverseWorldBlacklist = config.getBoolean("reversedWorldBlacklist");
-        if((!reverseWorldBlacklist && inBlacklistedWorld) ||
-                (reverseWorldBlacklist && !inBlacklistedWorld))
-            return false;
-
-        return true;
+        return (reverseWorldBlacklist || !inBlacklistedWorld) &&
+                (!reverseWorldBlacklist || inBlacklistedWorld);
     }
 
     public boolean isOnWall() {

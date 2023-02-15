@@ -11,7 +11,6 @@ public class PlayerManager {
 
     private final WallJumpConfiguration dataConfig;
     private final Map<Player, WPlayer> players = new HashMap<>();
-
     public PlayerManager() {
         dataConfig = WallJump.getInstance().getDataConfig();
     }

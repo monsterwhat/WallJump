@@ -14,7 +14,7 @@ public class BukkitUtils {
         if(matcher.find()) {
             return matcher.group().replace("MC: ", "");
         }
-        return "1.19";
+        return "1.19.3";
     }
 
     public static boolean isVersionBefore(Version version) {

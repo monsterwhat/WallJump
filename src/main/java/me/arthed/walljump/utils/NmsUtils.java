@@ -7,6 +7,7 @@ import me.arthed.walljump.utils.BukkitUtils.Version;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class NmsUtils {
 
@@ -19,7 +20,6 @@ public class NmsUtils {
             return getNmsClass(pre1_17ClassName);
         return Class.forName(_1_17Path);
     }
-
 
     public static Sound getBreakSoundForBlock(Block block) {
         try {
@@ -111,7 +111,7 @@ public class NmsUtils {
                     blockSuperClass = blockSuperClass.getSuperclass();
                 }
             }
-            stepSoundField.setAccessible(true);
+            Objects.requireNonNull(stepSoundField).setAccessible(true);
             Object soundEffectType = stepSoundField.get(nmsBlock);
 
             Field sound = soundEffectType.getClass().getDeclaredField(fieldName);
@@ -136,8 +136,8 @@ public class NmsUtils {
             String key = (String) nmsKey.getClass().getMethod(getKeyMethodName).invoke(nmsKey);
 
             return Sound.valueOf(key.replace(".", "_").toUpperCase());
-        } catch (Exception ignore) {
-            ignore.printStackTrace();
+        } catch (Exception Error) {
+            Error.printStackTrace();
         }
         return Sound.BLOCK_STONE_PLACE;
     }
