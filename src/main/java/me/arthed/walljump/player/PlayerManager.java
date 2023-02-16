@@ -15,11 +15,18 @@ public class PlayerManager {
         dataConfig = WallJump.getInstance().getDataConfig();
     }
 
+    /**
+     * Registers a player by creating a new WPlayer instance and adding it to the players map.
+     * If the player is already present in the dataConfig, their enabled status is retrieved and set on the WPlayer instance.
+     * @param player The player to register.
+     */
     public void registerPlayer(Player player) {
         WPlayer wplayer = new WPlayer(player);
-        if(dataConfig.contains(player.getUniqueId().toString()))
+        // If the player is already present in the dataConfig, their enabled status is retrieved and set on the WPlayer instance.
+        if (dataConfig.contains(player.getUniqueId().toString())) {
             wplayer.enabled = dataConfig.getBoolean(player.getUniqueId().toString());
-        players.put(player, wplayer);
+        }
+        players.put(player, wplayer); // Add the WPlayer instance to the players map.
     }
 
     public void unregisterPlayer(Player player) {

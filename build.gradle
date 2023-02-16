@@ -18,6 +18,7 @@ repositories {
         name = 'worldguard'
         url = 'https://maven.enginehub.org/repo/'
     }
+
 }
 
 dependencies {

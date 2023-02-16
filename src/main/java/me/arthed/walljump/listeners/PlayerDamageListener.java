@@ -13,15 +13,21 @@ public class PlayerDamageListener implements Listener {
 
     private final PlayerManager playerManager = WallJump.getInstance().getPlayerManager();
 
+    /**
+     * Cancels fall damage if the player is currently wall sliding.
+     * @param event The EntityDamageEvent representing the damage event.
+     */
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
-        if(event.getCause().equals(EntityDamageEvent.DamageCause.FALL) && event.getEntityType().equals(EntityType.PLAYER)) {
-            WPlayer wplayer = playerManager.getWPlayer((Player)event.getEntity());
-            if(wplayer != null && wplayer.isSliding()) {
-                event.setCancelled(true);
-                wplayer.onWallJumpEnd(false);
+        // Check if the damage is caused by falling and the entity is a player
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) && event.getEntityType().equals(EntityType.PLAYER)) {
+            WPlayer wplayer = playerManager.getWPlayer((Player)event.getEntity()); // Get the WPlayer instance for the player
+            if (wplayer != null && wplayer.isSliding()) { // Check if the player is wall sliding
+                event.setCancelled(true); // Cancel the fall damage
+                wplayer.onWallJumpEnd(false); // End the wall slide
             }
         }
     }
+
 
 }

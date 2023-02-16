@@ -31,47 +31,59 @@ public class WPlayer {
     private final WorldGuardHandler worldGuard;
     public boolean enabled = true;
 
+    /**
+     * Constructor for the WPlayer class, which wraps a Player instance with additional functionality for wall jumping.
+     * @param player the Player to be wrapped
+     */
     protected WPlayer(Player player) {
         this.player = player;
 
+        // get configuration and WorldGuard handler instances from the WallJump plugin
         config = WallJump.getInstance().getWallJumpConfig();
         worldGuard = WallJump.getInstance().getWorldGuardHandler();
     }
 
+    /**
+     * Starts the wall jump.
+     * If the wall jump cannot be started, this method returns.
+     * Otherwise, it triggers a WallJumpStartEvent and sets up the wall jumping process.
+     */
     public void onWallJumpStart() {
-        if(!canWallJump())
+        if (!canWallJump())
             return;
 
+        // trigger WallJumpStartEvent
         WallJumpStartEvent event = new WallJumpStartEvent(this);
         Bukkit.getPluginManager().callEvent(event);
-        if(event.isCancelled())
+        if (event.isCancelled())
             return;
 
+        // set up wall jumping process
         onWall = true;
         wallJumping = true;
         lastFacing = LocationUtils.getPlayerFacing(player);
         lastJumpLocation = player.getLocation();
-        if(remainingJumps > 0)
+        if (remainingJumps > 0)
             remainingJumps--;
 
-        //Stop some anti cheat checks that might be caused by wall-jumping
-        //AntiCheatUtils.stopPotentialAntiCheatChecks(player);
+        // Stop some anti-cheat checks that might be caused by wall-jumping
+        // AntiCheatUtils.stopPotentialAntiCheatChecks(player);
 
-        //play sound and spawn particles
-        //EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
+        // play sound and spawn particles
+        // EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
         EffectUtils.spawnSlidingParticles(player, 5, lastFacing);
 
-        //stop the player from falling and moving while on the wall
-        //or make them slide down
+        // stop the player from falling and moving while on the wall or make them slide down
         velocityY = 0;
-        if(BukkitUtils.isVersionBefore(BukkitUtils.Version.V1_9))
+        if (BukkitUtils.isVersionBefore(BukkitUtils.Version.V1_9))
             velocityY = 0.04f;
         velocityTask = Bukkit.getScheduler().runTaskTimerAsynchronously(WallJump.getInstance(), () -> {
             player.setVelocity(new Vector(0, velocityY, 0));
-            if(velocityY != 0) {
+            if (velocityY != 0) {
                 EffectUtils.spawnSlidingParticles(player, 2, lastFacing);
-                if(sliding) {
+                if (sliding) {
                     if (player.isOnGround() || !LocationUtils.getBlockPlayerIsStuckOn(player, lastFacing).getType().isSolid()) {
+                        // make the player slide down the wall and stop wall jumping
                         Bukkit.getScheduler().runTask(WallJump.getInstance(), () -> {
                             player.setFallDistance(0);
                             player.teleport(player.getLocation());
@@ -80,124 +92,133 @@ public class WPlayer {
                     }
                     if (lastJumpLocation.getY() - player.getLocation().getY() >= 1.2) {
                         lastJumpLocation = player.getLocation();
-                        //EffectUtils.playWallJumpSound(player, lastFacing, 0.2f, 0.6f);
+                        // EffectUtils.playWallJumpSound(player, lastFacing, 0.2f, 0.6f);
                     }
                 }
             }
         }, 0, 1);
 
-        //make the player fall | slide when the time runs out
-        if(fallTask != null)
+        // make the player fall | slide when the time runs out
+        if (fallTask != null)
             fallTask.cancel();
         fallTask = Bukkit.getScheduler().runTaskLaterAsynchronously(WallJump.getInstance(), () -> {
-            if(onWall) {
+            if (onWall) {
                 if (config.getBoolean("slide")) {
                     velocityY = (float) -config.getDouble("slidingSpeed");
                     sliding = true;
                 } else {
+                    // make the player fall and stop wall jumping
                     Bukkit.getScheduler().runTask(WallJump.getInstance(), (Runnable) this::onWallJumpEnd);
                 }
             }
-        }, (long)(config.getDouble("timeOnWall")*20));
+        }, (long)(config.getDouble("timeOnWall") * 20));
 
-        //cancel the task for resetting wall jumping if the player wall jumps
-        if(stopWallJumpingTask != null)
+        // cancel the task for resetting wall jumping if the player wall jumps
+        if (stopWallJumpingTask != null)
             stopWallJumpingTask.cancel();
-
-
     }
 
     public void onWallJumpEnd() {
         onWallJumpEnd(true);
     }
 
+    /**
+     * Called when the player stops wall jumping.
+     * Resets the wall jumping status of the player.
+     *
+     * @param jump a boolean indicating whether the player is jumping after wall jumping
+     */
     public void onWallJumpEnd(boolean jump) {
+        // stop potential anti-cheat checks
         //AntiCheatUtils.restartPotentialAntiCheatChecks(player);
 
+        // reset status
         onWall = false;
         sliding = false;
 
-
-        //allow the player to move again
+        // allow player to move again
         player.setFallDistance(0);
         velocityTask.cancel();
 
-        //call event
+        // call event
         WallJumpEndEvent event = new WallJumpEndEvent(this, config.getDouble("horizontalJumpPower"), config.getDouble("verticalJumpPower"));
         Bukkit.getPluginManager().callEvent(event);
-        //if the player is not sliding or can jump while sliding and is not looking down
-        if(jump &&// !event.isCancelled() &&
-                ((velocityY == 0 && player.getLocation().getPitch() < 85) ||
-                (config.getBoolean("canJumpWhileSliding") && player.getLocation().getPitch() < 60)))
-            //push the player in the direction that they are looking
-            VelocityUtils.pushPlayerInFront(player,
-                    event.getHorizontalPower(),
-                    event.getVerticalPower());
 
-        //after 1.5 seconds, if the player hasn't walled jumped again, reset everything
+        // if the player can jump and is not looking down, push them in the direction they are facing
+        if (jump && ((velocityY == 0 && player.getLocation().getPitch() < 85) ||
+                (config.getBoolean("canJumpWhileSliding") && player.getLocation().getPitch() < 60))) {
+            VelocityUtils.pushPlayerInFront(player, event.getHorizontalPower(), event.getVerticalPower());
+        }
+
+        // after 1.5 seconds, if the player hasn't walled jumped again, reset everything
         Bukkit.getScheduler().runTaskLaterAsynchronously(WallJump.getInstance(), () -> {
-            if(LocationUtils.isOnGround(player)) {
+            if (LocationUtils.isOnGround(player)) {
                 reset();
             }
         }, 12);
 
+        // reset wall jumping after 2.4 seconds
         stopWallJumpingTask = Bukkit.getScheduler().runTaskLaterAsynchronously(WallJump.getInstance(), this::reset, 24);
-
     }
 
+    // Resets the wall jump status of the player and cancels any ongoing tasks
     private void reset() {
-        wallJumping = false;
-
-        lastFacing = null;
-        lastJumpLocation = null;
-        remainingJumps = config.getInt("maxJumps");
-        if(remainingJumps == 0)
+        wallJumping = false; // reset wall jumping status        lastFacing = null;
+        lastFacing = null; // clear last facing direction
+        lastJumpLocation = null; // clear last jump location
+        remainingJumps = config.getInt("maxJumps"); // reset remaining jumps to maximum allowed jumps
+        if (remainingJumps == 0) // if maximum allowed jumps is 0, set it to -1 to allow unlimited jumps
             remainingJumps = -1;
-        if(stopWallJumpingTask != null)
+        if (stopWallJumpingTask != null) // cancel the stop wall jumping task if it is running
             stopWallJumpingTask.cancel();
         stopWallJumpingTask = null;
+
+        // call WallJumpResetEvent event to notify listeners that wall jump has been reset
         Bukkit.getScheduler().runTask(WallJump.getInstance(), () -> {
             WallJumpResetEvent event = new WallJumpResetEvent(this);
             Bukkit.getPluginManager().callEvent(event);
         });
     }
 
+    /**
+     * Checks if the player is able to wall jump based on various conditions
+     * @return true if the player is able to wall jump, false otherwise
+     */
     public boolean canWallJump() {
         WallFace facing = LocationUtils.getPlayerFacing(player);
+        // Adjusts lastJumpLocation so that height does not matter when calculating distance
         if(lastJumpLocation != null)
-            //used so height doesn't matter when calculating distance between the players location and the last jump location
             lastJumpLocation.setY(player.getLocation().getY());
-        if(
-                        !enabled ||
-                        onWall || //player is already stuck to a wall
-                        remainingJumps == 0 || //player reached jump limit
-                        (lastFacing != null && lastFacing.equals(facing)) || //player is facing the same direction as the last jump
-                        (lastJumpLocation != null && player.getLocation().distance(lastJumpLocation) <= config.getDouble("minimumDistance")) ||  //player is too close to the last jump location
-                        player.getVelocity().getY() < config.getDouble("maximumVelocity") || //player is falling too fast
-                        (config.getBoolean("needPermission") && !player.hasPermission("walljump.use")) || //player does not have the permission to wall-jump
-                        (worldGuard != null && !worldGuard.canWallJump(player)) //wall-jumping is not allowed in the region the player is in
-        )
 
+        // Check various conditions to see if the player can wall jump
+        if(!enabled || // Plugin is not enabled
+                onWall || // Player is already stuck to a wall
+                remainingJumps == 0 || // Player reached jump limit
+                (lastFacing != null && lastFacing.equals(facing)) || // Player is facing the same direction as the last jump
+                (lastJumpLocation != null && player.getLocation().distance(lastJumpLocation) <= config.getDouble("minimumDistance")) || // Player is too close to the last jump location
+                player.getVelocity().getY() < config.getDouble("maximumVelocity") || // Player is falling too fast
+                (config.getBoolean("needPermission") && !player.hasPermission("walljump.use")) || // Player does not have the permission to wall-jump
+                (worldGuard != null && !worldGuard.canWallJump(player))) { // Wall-jumping is not allowed in the region the player is in
             return false;
-        //check if the block the player is wall jumping on is blacklisted
+        }
+
+        // Check if the block the player is wall jumping on is blacklisted
         boolean onBlacklistedBlock = config.getMaterialList("blacklistedBlocks").contains(
-                player.getLocation().clone().add(facing.xOffset,
-                        facing.yOffset,
-                        facing.zOffset)
+                player.getLocation().clone().add(facing.xOffset, facing.yOffset, facing.zOffset)
                         .getBlock()
                         .getType());
         boolean reverseBlockBlacklist = config.getBoolean("reversedBlockBlacklist");
         if((!reverseBlockBlacklist && onBlacklistedBlock) ||
-                (reverseBlockBlacklist && !onBlacklistedBlock))
+                (reverseBlockBlacklist && !onBlacklistedBlock)) {
             return false;
+        }
 
-        //check if the world the player is in is blacklisted
-        boolean inBlacklistedWorld = config.getWorldList("blacklistedWorlds").contains(
-                player.getWorld());
+        // Check if the world the player is in is blacklisted
+        boolean inBlacklistedWorld = config.getWorldList("blacklistedWorlds").contains(player.getWorld());
         boolean reverseWorldBlacklist = config.getBoolean("reversedWorldBlacklist");
-        return (reverseWorldBlacklist || !inBlacklistedWorld) &&
-                (!reverseWorldBlacklist || inBlacklistedWorld);
+        return (reverseWorldBlacklist || !inBlacklistedWorld) && (!reverseWorldBlacklist || inBlacklistedWorld);
     }
+
 
     public boolean isOnWall() {
         return onWall;
