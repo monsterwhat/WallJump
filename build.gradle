@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-group = 'me.arthed.walljump'
-version = '2.0.2-Beta'
+group = 'com.playdeca.walljump'
+version = '3.0.0'
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
@@ -18,12 +18,11 @@ repositories {
         name = 'worldguard'
         url = 'https://maven.enginehub.org/repo/'
     }
-
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
-    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.7'
     implementation fileTree(dir:'libs', include: '*.jar')
     implementation group: 'org.jetbrains', name: 'annotations', version: '23.0.0'
 }

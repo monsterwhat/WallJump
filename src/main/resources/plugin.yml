@@ -1,6 +1,6 @@
 name: WallJump
-version: 2.0.3
-main: me.arthed.walljump.WallJump
+version: 3.0.0
+main: com.playdeca.walljump.WallJump
 api-version: 1.19
 softdepend: [WorldGuard, TreysDoubleJump]
 authors: [ Arthed, MonsterWhat ]
