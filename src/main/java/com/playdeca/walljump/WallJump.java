@@ -73,8 +73,6 @@ public final class WallJump extends JavaPlugin {
             api = new WallJumpAPI();
     }
 
-    //This code is part of an onLoad() method, which is executed when a plugin is loaded by the server.
-    //
     //Sets the plugin instance
     //Creates a new WallJumpConfiguration instance for the config.yml file
     //Creates a new WallJumpConfiguration instance for the data.yml file
@@ -98,7 +96,6 @@ public final class WallJump extends JavaPlugin {
             }
     }
 
-    //This code is part of an onDisable() method, which is executed when a plugin is unloaded by the server.
     //If the toggleCommand option is enabled, saves the data to the data.yml file
     //If the toggleCommand option is disabled, disables wall jump for all players
     //Saves the config.yml file

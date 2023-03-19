@@ -72,9 +72,8 @@ public class LocationUtils {
             // Get the location of the player
             Location location = player.getLocation();
             // Get the block the player is stuck on by adding the offsets for the specified direction to the player's location
-            Block block = location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock();
             // Return the block
-            return block;
+            return location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock();
         }catch (Exception e) {
             e.printStackTrace();
             return null;

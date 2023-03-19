@@ -27,7 +27,7 @@ public class WallJumpCommand implements CommandExecutor, TabExecutor {
 
     // The command executor
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         try {
             // Check if the command is walljump
             if(cmd.getName().equalsIgnoreCase("walljump")) {

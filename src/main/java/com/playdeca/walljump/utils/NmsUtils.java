@@ -1,9 +1,9 @@
 package com.playdeca.walljump.utils;
 
-import org.bukkit.Bukkit;
+import com.playdeca.walljump.utils.BukkitUtils.Version;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import com.playdeca.walljump.utils.BukkitUtils.Version;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -12,22 +12,10 @@ import java.util.Objects;
 // It is used to get the sound of a block when it is broken, placed, stepped on, hit or fell on
 public class NmsUtils {
 
-    // This method returns the NMS class for the given class name, using the current server version.
-    public static Class<?> getNmsClass(String nmsClassName) throws ClassNotFoundException {
-        // Get the server package name and split it into parts using the "." delimiter.
-        String[] packageParts = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
-        // Get the third part of the package name, which represents the server version (e.g. "v1_17_R1").
-        String version = packageParts[packageParts.length - 1];
-        // Construct the full class name by concatenating the NMS package name, the server version, and the class name.
-        String className = "net.minecraft.server." + version + "." + nmsClassName;
-        // Load and return the NMS class using the fully qualified class name.
-        return Class.forName(className);
-    }
-
     // This method returns the NMS class for the given class name, depending on the server version.
     // If the server version is 1.16 or earlier, it uses the pre-1.17 class name to get the NMS class.
     // If the server version is 1.17 or later, it uses the new class path to get the NMS class.
-    public static Class<?> getNmsClass(String pre1_17ClassName, String _1_17Path) throws ClassNotFoundException {
+    public static Class<?> getNmsClass(String _1_17Path) throws ClassNotFoundException {
             // Use the new class path to get the NMS class.
             return Class.forName(_1_17Path);
     }
@@ -117,7 +105,7 @@ public class NmsUtils {
             // Get the NMS World object from the Bukkit world
             Object nmsWorld = block.getWorld().getClass().getMethod("getHandle").invoke(block.getWorld());
             // Create a new BlockPosition object with the block's coordinates
-            Object blockPosition = getNmsClass("BlockPosition", "net.minecraft.core.BlockPosition")
+            Object blockPosition = getNmsClass("net.minecraft.core.BlockPosition")
                     .getConstructor(double.class, double.class, double.class)
                     .newInstance(block.getX(), block.getY(), block.getZ());
             // Get the NMS BlockType object for the block
@@ -191,8 +179,9 @@ public class NmsUtils {
                 // For Minecraft versions before 1.16, check if the server is running Paper and set the field name accordingly
                 if (BukkitUtils.isPaper())
                 soundFieldName = "breakSound";
-                else
-                soundFieldName = "X";
+                else {
+                    soundFieldName = "X";
+                     }
                 }
             return soundFieldName;
         }catch(Exception e){
@@ -215,14 +204,14 @@ public class NmsUtils {
                 // If using Paper, use the stepSound field name; otherwise, use Y
                 if(BukkitUtils.isPaper())
                 soundFieldName = "stepSound";
-                else
-                soundFieldName = "Y";
+                else{
+                    soundFieldName = "Y";
+                    }
                 }
             return soundFieldName;
         }catch(Exception e){
             e.printStackTrace();
-            String soundFieldName = "Y";
-            return soundFieldName;
+            return "Y";
         }
     }
 
@@ -233,15 +222,15 @@ public class NmsUtils {
                 // For versions earlier than 1.16, check if Paper server is being used
                 if(BukkitUtils.isPaper())
                 soundFieldName = "placeSound";
-                else
-                soundFieldName = "Z";
+                else{
+                    soundFieldName = "Z";
+                    }
                 }
             // Return the sound field name
             return soundFieldName;
         }catch(Exception e){
             e.printStackTrace();
-            String soundFieldName = "Z";
-            return soundFieldName;
+            return "Z";
         }
 
     }
@@ -257,14 +246,14 @@ public class NmsUtils {
             if(BukkitUtils.isVersionBefore(Version.V1_16)) {
                 if(BukkitUtils.isPaper())
                 soundFieldName = "hitSound"; // sound field name for Paper 1.15 and earlier
-                else
-                soundFieldName = "aa"; // sound field name for Minecraft 1.15 and later
+                else{
+                    soundFieldName = "aa"; // sound field name for Minecraft 1.15 and later
+                    }
                 }
             return soundFieldName;
         }catch(Exception Error){
             Error.printStackTrace();
-            String soundFieldName = "aa";
-            return soundFieldName;
+            return "aa";
         }
     }
 
@@ -275,14 +264,14 @@ public class NmsUtils {
             // Check if the server is running Paper and set the field name accordingly
                 if(BukkitUtils.isPaper())
                 soundFieldName = "fallSound";
-                else
-                soundFieldName = "ab";
+                else{
+                    soundFieldName = "ab";
+                    }
                 }
             return soundFieldName; // Return the field name
         }catch(Exception Error){
             Error.printStackTrace();
-            String soundFieldName = "ab";
-            return soundFieldName;
+            return "ab";
         }
     }
 }

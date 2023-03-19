@@ -51,17 +51,6 @@ public class BukkitUtils {
     }
 
 
-    /**
-     * Checks if a plugin is installed in the server.
-     * @param pluginName The name of the plugin to check for.
-     * @return True if the plugin is installed, false otherwise.
-     */
-    public static boolean isPluginInstalled(String pluginName) {
-        // Get the plugin manager and check if the plugin is present.
-        return Bukkit.getPluginManager().getPlugin(pluginName) != null;
-    }
-
-
     // Define an enum to represent different Minecraft versions
     public enum Version {
         V1_8(8),  // Minecraft 1.8.x

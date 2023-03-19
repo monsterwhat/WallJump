@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import java.util.Objects;
+
 public class WPlayer {
 
     private final Player player;
@@ -71,8 +73,8 @@ public class WPlayer {
             // Stop some anti-cheat checks that might be caused by wall-jumping
             // AntiCheatUtils.stopPotentialAntiCheatChecks(player);
 
-            // play sound and spawn particles
-            // EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
+            // play sound and spawn particles is bugged. TODO: Fix
+            //EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
             EffectUtils.spawnSlidingParticles(player, 5, lastFacing);
 
             // stop the player from falling and moving while on the wall or make them slide down
@@ -84,7 +86,7 @@ public class WPlayer {
                 if (velocityY != 0) {
                     EffectUtils.spawnSlidingParticles(player, 2, lastFacing);
                     if (sliding) {
-                        if (player.isOnGround() || !LocationUtils.getBlockPlayerIsStuckOn(player, lastFacing).getType().isSolid()) {
+                        if (player.isOnGround() || !Objects.requireNonNull(LocationUtils.getBlockPlayerIsStuckOn(player, lastFacing)).getType().isSolid()) {
                             // make the player slide down the wall and stop wall jumping
                             Bukkit.getScheduler().runTask(WallJump.getInstance(), () -> {
                                 player.setFallDistance(0);
