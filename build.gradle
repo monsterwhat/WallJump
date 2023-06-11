@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.playdeca.walljump'
-version = '3.0.1'
+version = '3.0.2'
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
@@ -21,8 +21,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT'
-    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.7'
+    compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.8'
     implementation fileTree(dir:'libs', include: '*.jar')
-    implementation group: 'org.jetbrains', name: 'annotations', version: '23.0.0'
+    implementation group: 'org.jetbrains', name: 'annotations', version: '24.0.1'
 }

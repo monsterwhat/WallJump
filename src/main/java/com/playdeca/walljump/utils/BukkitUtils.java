@@ -23,8 +23,8 @@ public class BukkitUtils {
         if(matcher.find()) {
             return matcher.group().replace("MC: ", "");
         }
-        // If no match is found, return a default value of "1.19.3"
-        return "1.19.3";
+        // If no match is found, return a default value of "1.20"
+        return "1.20";
     }
 
     public static boolean isVersionBefore(Version version) {
@@ -64,7 +64,8 @@ public class BukkitUtils {
         V1_16(16),  // Minecraft 1.16.x
         V1_17(17),  // Minecraft 1.17.x
         V1_18(18),  // Minecraft 1.18.x
-        V1_19(19);  // Minecraft 1.19.x
+        V1_19(19),  // Minecraft 1.19.x
+        V1_20(20);  // Minecraft 1.20.x
 
         public final int versionInt;
 
