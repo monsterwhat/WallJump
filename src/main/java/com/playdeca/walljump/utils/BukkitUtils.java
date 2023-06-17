@@ -66,6 +66,8 @@ public class BukkitUtils {
         V1_18(18),  // Minecraft 1.18.x
         V1_19(19),  // Minecraft 1.19.x
         V1_20(20);  // Minecraft 1.20.x
+        //V1.21(21);  // Minecraft 1.21.x
+
 
         public final int versionInt;
 
