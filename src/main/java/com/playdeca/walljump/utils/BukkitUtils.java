@@ -11,7 +11,7 @@ public class BukkitUtils {
 
     /**
      * Returns the Minecraft version in use by the server.
-     * If it cannot be determined, returns the string "1.19.3" (Feb 2023).
+     * If it cannot be determined, returns the string "1.20" (latest version).
      * @return A string representing the Minecraft version in use.
      */
     private static String getVersion() {
