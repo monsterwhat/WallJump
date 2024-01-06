@@ -1,5 +1,6 @@
 package com.playdeca.walljump.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -22,7 +23,7 @@ public class VelocityUtils {
             velocity.setY(verticalPower);
             player.setVelocity(velocity);
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while pushing a player in front of him.");
         }
     }
 }

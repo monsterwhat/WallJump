@@ -3,6 +3,7 @@ package com.playdeca.walljump.listeners;
 import com.playdeca.walljump.WallJump;
 import com.playdeca.walljump.player.PlayerManager;
 import com.playdeca.walljump.player.WPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +30,7 @@ public class PlayerDamageListener implements Listener {
                 }
             }
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while handling a player damage event.");
         }
     }
 }

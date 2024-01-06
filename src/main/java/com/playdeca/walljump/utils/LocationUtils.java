@@ -1,7 +1,9 @@
 package com.playdeca.walljump.utils;
 
 import com.playdeca.walljump.enums.WallFace;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -34,7 +36,7 @@ public class LocationUtils {
             // If the block is not solid, the player is not touching a wall
             return false;
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Error checking if player is touching a wall");
             return false;
         }
     }
@@ -56,7 +58,7 @@ public class LocationUtils {
             Block block = location.getBlock();
             return block.getType().isSolid();
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Error checking if player is on the ground");
             return false;
         }
     }
@@ -73,9 +75,13 @@ public class LocationUtils {
             Location location = player.getLocation();
             // Get the block the player is stuck on by adding the offsets for the specified direction to the player's location
             // Return the block
-            return location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock();
+            if(location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock()!=null){
+                return location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock();
+            }else{
+                return Bukkit.getWorld("world").getBlockAt(0,0,0);
+            }
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Error getting block player is stuck on");
             return null;
         }
     }
@@ -109,7 +115,7 @@ public class LocationUtils {
                 return WallFace.NORTH;
             }
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Error getting player facing direction");
             return WallFace.NORTH;
         }
     }

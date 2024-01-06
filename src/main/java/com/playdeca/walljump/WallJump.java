@@ -20,11 +20,11 @@ public final class WallJump extends JavaPlugin {
 
     // The plugin instance
     private static WallJump plugin;
-    public WallJumpAPI api;
     private PlayerManager playerManager;
     private WallJumpConfiguration config;
     private WallJumpConfiguration dataConfig;
     private WorldGuardHandler worldGuard;
+    public WallJumpAPI api;
 
     public static WallJump getInstance() {
         return plugin;

@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.playdeca.walljump'
-version = '3.0.3'
+version = '4.0.0'
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
@@ -11,8 +11,8 @@ targetCompatibility = '17'
 repositories {
     mavenCentral()
     maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
     }
     maven {
         name = 'worldguard'
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
+    compileOnly "io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT"
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.8'
     implementation fileTree(dir:'libs', include: '*.jar')
     implementation group: 'org.jetbrains', name: 'annotations', version: '24.0.1'

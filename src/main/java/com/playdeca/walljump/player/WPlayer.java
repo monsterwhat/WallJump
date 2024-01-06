@@ -78,7 +78,7 @@ public class WPlayer {
 
             // play sound and spawn particles is bugged. TODO: Fix
             //EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
-            EffectUtils.spawnSlidingParticles(player, 5, lastFacing);
+            //EffectUtils.spawnSlidingParticles(player, 5, lastFacing);
 
             // stop the player from falling and moving while on the wall or make them slide down
             velocityY = 0;
@@ -87,7 +87,7 @@ public class WPlayer {
             velocityTask = Bukkit.getScheduler().runTaskTimerAsynchronously(WallJump.getInstance(), () -> {
                 player.setVelocity(new Vector(0, velocityY, 0));
                 if (velocityY != 0) {
-                    EffectUtils.spawnSlidingParticles(player, 2, lastFacing);
+                    //EffectUtils.spawnSlidingParticles(player, 2, lastFacing);
                     if (sliding) {
                         if (player.isOnGround() || !Objects.requireNonNull(LocationUtils.getBlockPlayerIsStuckOn(player, lastFacing)).getType().isSolid()) {
                             // make the player slide down the wall and stop wall jumping
@@ -99,7 +99,7 @@ public class WPlayer {
                         }
                         if (lastJumpLocation.getY() - player.getLocation().getY() >= 1.2) {
                             lastJumpLocation = player.getLocation();
-                            // EffectUtils.playWallJumpSound(player, lastFacing, 0.2f, 0.6f);
+                            //EffectUtils.playWallJumpSound(player, lastFacing, 0.2f, 0.6f);
                         }
                     }
                 }
@@ -124,7 +124,7 @@ public class WPlayer {
             if (stopWallJumpingTask != null)
                 stopWallJumpingTask.cancel();
         }catch (Exception e){
-            e.printStackTrace();
+           Bukkit.getLogger().warning("Failed to start wall jump for player " + player.getName() + "!");
         }
     }
 
@@ -168,7 +168,7 @@ public class WPlayer {
             // reset wall jumping after 2.4 seconds
             stopWallJumpingTask = Bukkit.getScheduler().runTaskLaterAsynchronously(WallJump.getInstance(), this::reset, 24);
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Failed to end wall jump for player " + player.getName() + "!");
         }
     }
 
@@ -191,7 +191,7 @@ public class WPlayer {
                 Bukkit.getPluginManager().callEvent(event);
             });
         }catch (Exception e){
-            e.printStackTrace();
+           Bukkit.getLogger().warning("Failed to reset wall jump for player " + player.getName() + "!");
         }
     }
 
@@ -234,12 +234,10 @@ public class WPlayer {
             boolean reverseWorldBlacklist = config.getBoolean("reversedWorldBlacklist");
             return (reverseWorldBlacklist || !inBlacklistedWorld) && (!reverseWorldBlacklist || inBlacklistedWorld);
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Failed to check if player " + player.getName() + " can wall jump!");
             return false;
         }
     }
-
-
     public boolean isOnWall() {
         return onWall;
     }

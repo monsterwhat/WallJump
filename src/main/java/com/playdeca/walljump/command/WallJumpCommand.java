@@ -2,11 +2,11 @@ package com.playdeca.walljump.command;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 import com.playdeca.walljump.config.WallJumpConfiguration;
 import com.playdeca.walljump.player.WPlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -37,7 +37,8 @@ public class WallJumpCommand implements CommandExecutor, TabExecutor {
                     if(args[0].equalsIgnoreCase("reload")) {
                         // Check if the sender has the permission to reload the config
                         config.reload();
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e[WallJump] &7Config reloaded!"));
+                        Component message = Component.text("Config reloaded!").color(NamedTextColor.YELLOW);
+                        sender.sendMessage(message);
                         return true;
                     }
                     // Check if the sender wants to toggle the wall jump
@@ -46,18 +47,21 @@ public class WallJumpCommand implements CommandExecutor, TabExecutor {
                         if(args[0].equalsIgnoreCase("on")) {
                             // Enable the wall jump
                             WallJump.getInstance().getPlayerManager().getWPlayer((Player)sender).enabled = true;
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("toggleCommandMessageOn"))));
+                            Component message = Component.text("Wall jump enabled!").color(NamedTextColor.YELLOW);
+                            sender.sendMessage(message);
                             return true;
                         }
                         // Check if the sender wants to disable the wall jump
                         else if(args[0].equalsIgnoreCase("off")) {
                             // Disable the wall jump
                             WallJump.getInstance().getPlayerManager().getWPlayer((Player)sender).enabled = false;
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("toggleCommandMessageOff"))));
+                            Component message = Component.text("Wall jump disabled!").color(NamedTextColor.YELLOW);
+                                sender.sendMessage(message);
                             return true;
                         }
                         // If the sender didn't specify on or off
-                        sender.sendMessage(ChatColor.RED + "Unknown command!");
+                        Component message = Component.text("Unknown command!").color(NamedTextColor.RED);
+                        sender.sendMessage(message);
                         return false;
                     }
                 }
@@ -69,28 +73,28 @@ public class WallJumpCommand implements CommandExecutor, TabExecutor {
                     if(wPlayer.enabled) {
                         // Disable the wall jump
                         wPlayer.enabled = false;
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("toggleCommandMessageOff"))));
+                        Component message = Component.text("Wall jump disabled!").color(NamedTextColor.YELLOW);
+                        sender.sendMessage(message);
                     }
                     // If the wall jump is disabled
                     else {
                         // Enable the wall jump
                         wPlayer.enabled = true;
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("toggleCommandMessageOn"))));
+                        Component message = Component.text("Wall jump enabled!").color(NamedTextColor.YELLOW);
+                        sender.sendMessage(message);
                     }
                     return true;
                 }
                 //Send the version
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                        "&e[WallJump] &7Version &7&l" +
-                                WallJump.getInstance().getDescription().getVersion() +
-                                " &7by &7&lMonster_What"));
+                Component message = Component.text("WallJump version " + WallJump.getInstance().getDescription().getVersion() + " by Monster_What").color(NamedTextColor.YELLOW);
+                sender.sendMessage(message);
                 return true;
             }
             // If the command is not walljump
             return false;
 
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while executing the command.");
             return false;
         }
     }
@@ -114,7 +118,7 @@ public class WallJumpCommand implements CommandExecutor, TabExecutor {
             }
             return null;
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while tab completing the command.");
             return null;
         }
     }
@@ -129,7 +133,7 @@ public class WallJumpCommand implements CommandExecutor, TabExecutor {
             }
             return list;
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while getting the matching arguments.");
             return null;
         }
     }

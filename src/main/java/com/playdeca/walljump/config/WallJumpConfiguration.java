@@ -40,6 +40,7 @@ public class WallJumpConfiguration extends YamlConfiguration {
             assert defaultConfigInputStream != null;
             InputStreamReader defaultConfigReader = new InputStreamReader(defaultConfigInputStream);
             setDefaults(YamlConfiguration.loadConfiguration(defaultConfigReader));
+            Bukkit.getLogger().info("Config loaded!");
     }
 
     // This method is used to reload the config
@@ -49,8 +50,9 @@ public class WallJumpConfiguration extends YamlConfiguration {
             load(configFile);
             // Clear the data
             data = new HashMap<>();
+            Bukkit.getLogger().info("Config reloaded!");
         } catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while reloading the config.");
         }
     }
 
@@ -58,23 +60,9 @@ public class WallJumpConfiguration extends YamlConfiguration {
     public void save() {
         try {
             save(configFile);
+            Bukkit.getLogger().info("Config saved!");
         } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // This method is used to get a string from the config
-    public Material getMaterial(String path) {
-        try {
-            if(data.containsKey(path))
-                return (Material)data.get(path);
-
-            Material result = Material.valueOf(getString(path));
-            data.put(path, result);
-            return result;
-        }catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            Bukkit.getLogger().warning("An error occurred while saving the config.");
         }
     }
 
@@ -94,22 +82,7 @@ public class WallJumpConfiguration extends YamlConfiguration {
             data.put(path, result);
             return result;
         }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // This method is used to get a world from the config
-    public World getWorld(String path) {
-        try {
-            if(data.containsKey(path))
-                return (World)data.get(path);
-
-            World result = Bukkit.getWorld(Objects.requireNonNull(getString(path)));
-            data.put(path, result);
-            return result;
-        }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while getting a material list from the config.");
             return null;
         }
     }
@@ -130,7 +103,7 @@ public class WallJumpConfiguration extends YamlConfiguration {
             data.put(path, result);
             return result;
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while getting a world list from the config.");
             return null;
         }
     }

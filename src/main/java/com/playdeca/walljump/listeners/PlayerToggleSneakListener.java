@@ -4,6 +4,7 @@ import com.playdeca.walljump.WallJump;
 import com.playdeca.walljump.player.PlayerManager;
 import com.playdeca.walljump.player.WPlayer;
 import com.playdeca.walljump.utils.LocationUtils;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +32,7 @@ public class PlayerToggleSneakListener implements Listener {
                     wplayer.onWallJumpStart();
             }
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while handling a player toggle sneak event.");
         }
     }
 }

@@ -4,6 +4,7 @@ import com.playdeca.walljump.WallJump;
 import com.playdeca.walljump.player.PlayerManager;
 import com.playdeca.walljump.utils.LocationUtils;
 import com.playdeca.walljump.api.events.GroundPoundEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -26,7 +27,7 @@ public class OtherPluginsHandler implements Listener {
             if(playerManager.getWPlayer(event.getPlayer()).isWallJumping() || LocationUtils.isTouchingAWall(event.getPlayer()))
                 event.setCancelled(true);
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("An error occurred while handling the GroundPoundEvent");
         }
     }
 }

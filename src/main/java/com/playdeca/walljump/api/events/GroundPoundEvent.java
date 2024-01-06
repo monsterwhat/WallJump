@@ -11,15 +11,13 @@ public class GroundPoundEvent extends Event implements Cancellable {
 
     private final Player player;
     private boolean isCancelled;
-    private double velocityDown;
 
     /**
      * Instantiates a new Ground pound event.
      */
-    public GroundPoundEvent(Player player, boolean isCancelled, double velocityDown) {
+    public GroundPoundEvent(Player player, boolean isCancelled) {
         this.player = player;
         this.isCancelled = isCancelled;
-        this.velocityDown = velocityDown;
     }
 
     /**
@@ -41,30 +39,6 @@ public class GroundPoundEvent extends Event implements Cancellable {
         this.isCancelled = cancel;
     }
 
-    /**
-     * Gets cancelled.
-     * @return if cancelled
-     */
-    public boolean getCancelled() {
-        return this.isCancelled;
-    }
-
-    /**
-     * Gets velocity down.
-     * @return the velocity down
-     */
-    public double getVelocityDown() {
-        return this.velocityDown;
-    }
-
-    /**
-     * Sets velocity down.
-     * @param velocityDown the velocity down
-     */
-    public void setVelocityDown(double velocityDown) {
-        this.velocityDown = velocityDown;
-    }
-
     private static final HandlerList HANDLERS = new HandlerList();
 
     @Override
@@ -79,4 +53,5 @@ public class GroundPoundEvent extends Event implements Cancellable {
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
+
 }

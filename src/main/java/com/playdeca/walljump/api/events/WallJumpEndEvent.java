@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 public class WallJumpEndEvent extends WallJumpEvent {
 
     // The horizontal and vertical power of the wall jump
-    private double horizontalPower;
+    private final double horizontalPower;
     // The vertical power is the power of the jump, not the power of the wall jump
-    private double verticalPower;
+    private final double verticalPower;
 
     // The constructor of the event
     public WallJumpEndEvent(@NotNull WPlayer who, double horizontalPower, double verticalPower) {
@@ -25,6 +25,4 @@ public class WallJumpEndEvent extends WallJumpEvent {
     public double getVerticalPower() {
         return verticalPower;
     }
-    public void setHorizontalPower(double power) {this.horizontalPower = power;}
-    public void setVerticalPower(double power) {this.verticalPower = power;}
 }

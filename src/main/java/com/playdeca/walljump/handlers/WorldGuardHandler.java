@@ -3,6 +3,8 @@ package com.playdeca.walljump.handlers;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -73,7 +75,7 @@ public class WorldGuardHandler {
             }
             return associable;
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Error getting Region associable");
             return null;
         }
     }
@@ -94,7 +96,7 @@ public class WorldGuardHandler {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Bukkit.getLogger().log(Level.WARNING, "Failed to register WorldGuard custom flags", ex);
         }
     }
 
@@ -197,7 +199,7 @@ public class WorldGuardHandler {
 
             return checkSet.queryState(getAssociable(player), ALLOW_WALL_JUMP) != StateFlag.State.DENY;
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Error checking if player can wall jump");
             return true;
         }
     }

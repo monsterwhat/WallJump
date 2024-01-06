@@ -204,3 +204,6 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,intellij,java,netbeans,gradle
+.idea/modules/com.playdeca.walljump.walljump.main~2.iml
+.idea/modules/com.playdeca.walljump.walljump.main.iml
+*.iml

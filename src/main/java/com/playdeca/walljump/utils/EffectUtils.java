@@ -1,6 +1,7 @@
 package com.playdeca.walljump.utils;
 
 import com.playdeca.walljump.enums.WallFace;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -16,25 +17,22 @@ public class EffectUtils {
             if (BukkitUtils.isVersionBefore(Version.V1_8))
                 return;
 
-            Object data;
             Location location = player.getLocation();
             Block block = location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock();
 
-            //Get the block data directly.
-            data = block.getBlockData();
-
             // Spawn a particle effect at the player's location, offset in the direction they're facing.
             player.getWorld().spawnParticle(
-                    Particle.BLOCK_DUST, // The particle effect to use
-                    location.clone().add(facing.xOffset*0.3, facing.yOffset*0.3-0.3, facing.zOffset*0.3), // The location to spawn particles
+                    Particle.ASH, // The particle effect to use
+                    location.clone().add(facing.xOffset * 0.3, facing.yOffset * 0.3, facing.zOffset * 0.3), // The location to spawn particles
                     count, // The number of particles to spawn
                     0.2f, // The X-axis offset of the particles
                     0.2f, // The Y-axis offset of the particles
                     0.2f, // The Z-axis offset of the particles
-                    data // The data value for the particles
+                    null // Set data to null
             );
         }catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Failed to spawn sliding particles for player " + player.getName() + "!");
+            Bukkit.getLogger().warning(e.getMessage());
         }
     }
 
@@ -49,7 +47,8 @@ public class EffectUtils {
                     pitch // Set the pitch of the sound
             );
         }catch (Exception e){
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Failed to play wall jump sound for player " + player.getName() + "!");
+            Bukkit.getLogger().warning(e.getMessage());
         }
     }
 }
