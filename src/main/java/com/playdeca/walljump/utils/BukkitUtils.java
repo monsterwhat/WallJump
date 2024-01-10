@@ -27,13 +27,6 @@ public class BukkitUtils {
         return "1.20";
     }
 
-    public static boolean isVersionBefore(Version version) {
-        return currentVersionInt <= version.versionInt;
-    }
-
-    public static boolean isVersionAfter(Version version) {
-        return currentVersionInt >= version.versionInt;
-    }
 
     /**
      * Checks whether the server is running Paper.
@@ -46,6 +39,7 @@ public class BukkitUtils {
             Class.forName("com.destroystokyo.paper.ParticleBuilder");
             return true; // If it's loaded successfully, return true
         } catch (ClassNotFoundException notPaper) {
+            Bukkit.getLogger().info("WallJump is not running on Paper. Some features may not work.");
             return false; // If the class is not found, return false
         }
     }
@@ -67,12 +61,19 @@ public class BukkitUtils {
         V1_20(20),  // Minecraft 1.20.x
         V1_21(21);  // Minecraft 1.21.x
 
-
         public final int versionInt;
 
         // Constructor for the Version enum that takes a version integer
         Version(int versionInt) {
             this.versionInt = versionInt;
         }
+    }
+
+    public static boolean isVersionBefore(Version version) {
+        return currentVersionInt <= version.versionInt;
+    }
+
+    public static boolean isVersionAfter(Version version) {
+        return currentVersionInt >= version.versionInt;
     }
 }

@@ -35,7 +35,6 @@ public class WorldGuardHandler {
 
     public static StateFlag ALLOW_WALL_JUMP;
 
-
     public boolean isEnabled() {
         return worldGuardPlugin != null;
     }

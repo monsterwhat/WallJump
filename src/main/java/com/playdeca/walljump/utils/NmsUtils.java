@@ -9,8 +9,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-// This class is used to get the sound of a block
-// It is used to get the sound of a block when it is broken, placed, stepped on, hit or fell on
 public class NmsUtils {
 
     // This method returns the NMS class for the given class name, depending on the server version.
@@ -21,16 +19,12 @@ public class NmsUtils {
             return Class.forName(_1_17Path);
     }
 
-    // This method returns the sound to play when a player walks on a block.
-    // It takes a Block object as input and returns a Sound object.
     public static Sound getStepSoundForBlock(Block block) {
         try {
                 // Get the step sound for the block
-                // using the name returned by the getStepSoundFieldName() method.
                 return getSoundForBlock(block, getStepSoundFieldName());
 
         } catch (Exception e) {
-            // If an exception is thrown while getting the sound, print the stack trace to the console.
             Bukkit.getLogger().warning("An error occurred while getting the step sound for a block.");
             // If no sound can be determined, return the default block step sound.
             return Sound.BLOCK_STONE_STEP;
@@ -55,7 +49,6 @@ public class NmsUtils {
             Object nmsBlock = getBlockMethod.invoke(nmsType);
 
             // Get the StepSound object for the block's material
-            // Use the stepSound field on the NMS BlockType object
             Field stepSoundField = null;
             String stepSoundFieldName = "stepSound";
             if(BukkitUtils.isVersionAfter(Version.V1_17))

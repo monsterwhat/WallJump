@@ -6,21 +6,17 @@ import com.playdeca.walljump.player.PlayerManager;
 import com.playdeca.walljump.player.WPlayer;
 import org.bukkit.entity.Player;
 
-// This class is used to get the API
 public class WallJumpAPI {
 
-    // The player manager and the config
     private static PlayerManager playerManager;
     private static WallJumpConfiguration config;
 
-    // The constructor
     public WallJumpAPI() {
         WallJump wallJump = WallJump.getInstance();
         playerManager = wallJump.getPlayerManager();
         config = wallJump.getWallJumpConfig();
     }
 
-    // Getters
     public static WPlayer getWPlayer(Player player) {
         return playerManager.getWPlayer(player);
     }

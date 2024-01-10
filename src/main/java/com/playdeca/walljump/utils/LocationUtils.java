@@ -74,12 +74,7 @@ public class LocationUtils {
             // Get the location of the player
             Location location = player.getLocation();
             // Get the block the player is stuck on by adding the offsets for the specified direction to the player's location
-            // Return the block
-            if(location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock()!=null){
-                return location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock();
-            }else{
-                return Bukkit.getWorld("world").getBlockAt(0,0,0);
-            }
+            return location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock();
         }catch (Exception e) {
             Bukkit.getLogger().severe("Error getting block player is stuck on");
             return null;

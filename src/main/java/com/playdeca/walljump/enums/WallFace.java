@@ -17,7 +17,6 @@ public enum WallFace {
     public final int zOffset; // z-axis offset of the wall
     public final float distance; // distance from the wall
 
-    // The constructor
     WallFace(int xOffset, int yOffset, int zOffset, float distance) {
         this.xOffset = xOffset;
         this.yOffset = yOffset;

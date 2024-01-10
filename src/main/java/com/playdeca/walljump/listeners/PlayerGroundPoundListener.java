@@ -1,4 +1,4 @@
-package com.playdeca.walljump.handlers;
+package com.playdeca.walljump.listeners;
 
 import com.playdeca.walljump.WallJump;
 import com.playdeca.walljump.player.PlayerManager;
@@ -8,14 +8,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-// This class handles events from other plugins
-public class OtherPluginsHandler implements Listener {
+public class PlayerGroundPoundListener implements Listener {
 
-    // The player manager
     private final PlayerManager playerManager;
 
-    // The constructor of the class
-    public OtherPluginsHandler() {
+    public PlayerGroundPoundListener() {
         playerManager = WallJump.getInstance().getPlayerManager();
     }
 

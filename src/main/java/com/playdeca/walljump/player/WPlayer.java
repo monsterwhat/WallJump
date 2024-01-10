@@ -77,8 +77,8 @@ public class WPlayer {
             // AntiCheatUtils.stopPotentialAntiCheatChecks(player);
 
             // play sound and spawn particles is bugged. TODO: Fix
-            //EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
-            //EffectUtils.spawnSlidingParticles(player, 5, lastFacing);
+            EffectUtils.playWallJumpSound(player, lastFacing, 0.3f, 1.2f);
+            EffectUtils.spawnSlidingParticles(player, 5, lastFacing);
 
             // stop the player from falling and moving while on the wall or make them slide down
             velocityY = 0;
@@ -87,7 +87,7 @@ public class WPlayer {
             velocityTask = Bukkit.getScheduler().runTaskTimerAsynchronously(WallJump.getInstance(), () -> {
                 player.setVelocity(new Vector(0, velocityY, 0));
                 if (velocityY != 0) {
-                    //EffectUtils.spawnSlidingParticles(player, 2, lastFacing);
+                    EffectUtils.spawnSlidingParticles(player, 2, lastFacing);
                     if (sliding) {
                         if (player.isOnGround() || !Objects.requireNonNull(LocationUtils.getBlockPlayerIsStuckOn(player, lastFacing)).getType().isSolid()) {
                             // make the player slide down the wall and stop wall jumping
@@ -99,7 +99,9 @@ public class WPlayer {
                         }
                         if (lastJumpLocation.getY() - player.getLocation().getY() >= 1.2) {
                             lastJumpLocation = player.getLocation();
-                            //EffectUtils.playWallJumpSound(player, lastFacing, 0.2f, 0.6f);
+                            Bukkit.getScheduler().runTask(WallJump.getInstance(), () -> {
+                                EffectUtils.playWallJumpSound(player, lastFacing, 0.2f, 0.6f);
+                            });
                         }
                     }
                 }
@@ -175,7 +177,7 @@ public class WPlayer {
     // Resets the wall jump status of the player and cancels any ongoing tasks
     private void reset() {
         try {
-            wallJumping = false; // reset wall jumping status        lastFacing = null;
+            wallJumping = false; // reset wall jumping status
             lastFacing = null; // clear last facing direction
             lastJumpLocation = null; // clear last jump location
             remainingJumps = config.getInt("maxJumps"); // reset remaining jumps to maximum allowed jumps

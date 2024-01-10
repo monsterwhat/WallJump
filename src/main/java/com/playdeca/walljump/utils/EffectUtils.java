@@ -3,6 +3,7 @@ package com.playdeca.walljump.utils;
 import com.playdeca.walljump.enums.WallFace;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -18,17 +19,15 @@ public class EffectUtils {
                 return;
 
             Location location = player.getLocation();
-            Block block = location.clone().add(facing.xOffset, facing.yOffset, facing.zOffset).getBlock();
 
             // Spawn a particle effect at the player's location, offset in the direction they're facing.
             player.getWorld().spawnParticle(
-                    Particle.ASH, // The particle effect to use
+                    Particle.CLOUD, // The particle effect to used
                     location.clone().add(facing.xOffset * 0.3, facing.yOffset * 0.3, facing.zOffset * 0.3), // The location to spawn particles
                     count, // The number of particles to spawn
                     0.2f, // The X-axis offset of the particles
                     0.2f, // The Y-axis offset of the particles
-                    0.2f, // The Z-axis offset of the particles
-                    null // Set data to null
+                    0.2f // The Z-axis offset of the particles
             );
         }catch (Exception e) {
             Bukkit.getLogger().warning("Failed to spawn sliding particles for player " + player.getName() + "!");
@@ -42,7 +41,8 @@ public class EffectUtils {
             player.getWorld().playSound(
                     player.getLocation(),
                     // Get the block the player is stuck on in the given direction
-                    NmsUtils.getStepSoundForBlock(LocationUtils.getBlockPlayerIsStuckOn(player, facing)),
+                    //NmsUtils.getStepSoundForBlock(LocationUtils.getBlockPlayerIsStuckOn(player, facing)),
+                    Material.STONE.createBlockData().getSoundGroup().getStepSound(),
                     volume, // Set the volume of the sound
                     pitch // Set the pitch of the sound
             );

@@ -15,89 +15,105 @@ import com.playdeca.walljump.WallJump;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-// This class is used to handle the /walljump command
 public class WallJumpCommand implements CommandExecutor, TabExecutor {
 
-    // The config
     private final WallJumpConfiguration config;
-    // The constructor
     public WallJumpCommand() {
         config = WallJump.getInstance().getWallJumpConfig();
     }
 
-    // The command executor
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         try {
             // Check if the command is walljump
-            if(cmd.getName().equalsIgnoreCase("walljump")) {
-                // Check if the sender is a player
-                if(args.length > 0) {
+            if (cmd.getName().equalsIgnoreCase("walljump")) {
+                if (args.length > 0) {
                     // Check if the sender wants to reload the config
-                    if(args[0].equalsIgnoreCase("reload")) {
-                        // Check if the sender has the permission to reload the config
-                        config.reload();
-                        Component message = Component.text("Config reloaded!").color(NamedTextColor.YELLOW);
-                        sender.sendMessage(message);
-                        return true;
+                    if (args[0].equalsIgnoreCase("reload")) {
+                        return handleReloadCommand(sender);
                     }
-                    // Check if the sender wants to toggle the wall jump
-                    else if(sender instanceof Player && config.getBoolean("toggleCommand")) {
-                        // Check if the sender wants to enable the wall jump
-                        if(args[0].equalsIgnoreCase("on")) {
-                            // Enable the wall jump
-                            WallJump.getInstance().getPlayerManager().getWPlayer((Player)sender).enabled = true;
-                            Component message = Component.text("Wall jump enabled!").color(NamedTextColor.YELLOW);
-                            sender.sendMessage(message);
-                            return true;
-                        }
-                        // Check if the sender wants to disable the wall jump
-                        else if(args[0].equalsIgnoreCase("off")) {
-                            // Disable the wall jump
-                            WallJump.getInstance().getPlayerManager().getWPlayer((Player)sender).enabled = false;
-                            Component message = Component.text("Wall jump disabled!").color(NamedTextColor.YELLOW);
-                                sender.sendMessage(message);
-                            return true;
-                        }
-                        // If the sender didn't specify on or off
-                        Component message = Component.text("Unknown command!").color(NamedTextColor.RED);
-                        sender.sendMessage(message);
-                        return false;
+                    if (args[0].equalsIgnoreCase("toggle")) {
+                        // Check if the sender wants to toggle the wall jump
+                        return handleToggleCommand((Player) sender, args[1]);
+                    }
+                    if (args[0].equalsIgnoreCase("help")) {
+                        // Check if the command is walljump and the argument is help
+                        return handleHelpCommand(sender);
+                    }
+                    if (args[0].equalsIgnoreCase("info")) {
+                        // Check if the command is walljump and the argument is info
+                        return handleWallJumpInfo(sender);
                     }
                 }
-                // If the sender is a player and the toggle command is enabled
-                else if (sender instanceof Player && config.getBoolean("toggleCommand")) {
-                    // Toggle the wall jump
-                    WPlayer wPlayer = WallJump.getInstance().getPlayerManager().getWPlayer((Player)sender);
-                    // Check if the wall jump is enabled
-                    if(wPlayer.enabled) {
-                        // Disable the wall jump
-                        wPlayer.enabled = false;
-                        Component message = Component.text("Wall jump disabled!").color(NamedTextColor.YELLOW);
-                        sender.sendMessage(message);
-                    }
-                    // If the wall jump is disabled
-                    else {
-                        // Enable the wall jump
-                        wPlayer.enabled = true;
-                        Component message = Component.text("Wall jump enabled!").color(NamedTextColor.YELLOW);
-                        sender.sendMessage(message);
-                    }
-                    return true;
-                }
-                //Send the version
-                Component message = Component.text("WallJump version " + WallJump.getInstance().getDescription().getVersion() + " by Monster_What").color(NamedTextColor.YELLOW);
-                sender.sendMessage(message);
-                return true;
+                return handleHelpCommand(sender);
             }
-            // If the command is not walljump
+            // If the command is not recognized
             return false;
-
-        }catch (Exception e){
+        } catch (Exception e) {
             Bukkit.getLogger().warning("An error occurred while executing the command.");
             return false;
         }
     }
+
+    private boolean handleHelpCommand(@NotNull CommandSender sender) {
+        Component helpMessage = Component.text("[===]").color(NamedTextColor.GOLD).append(Component.text("WallJump Plugin Help").color(NamedTextColor.WHITE).append(Component.text("[===]").color(NamedTextColor.GOLD)))
+                .append(Component.newline());
+        sender.sendMessage(helpMessage);
+        Component helpMessage1 = Component.text("/walljump help ").color(NamedTextColor.WHITE).clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/walljump help")).hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(Component.text("Click me to show this help message").color(NamedTextColor.YELLOW)))
+                .append(Component.text("Show this help message ").color(NamedTextColor.YELLOW));
+        sender.sendMessage(helpMessage1);
+        Component helpMessage2 = Component.text("/walljump info ").color(NamedTextColor.WHITE).clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/walljump info")).hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(Component.text("Click me to show plugin info").color(NamedTextColor.YELLOW)))
+                .append(Component.text("Show plugin info").color(NamedTextColor.YELLOW));
+        sender.sendMessage(helpMessage2);
+        Component helpMessage3 = Component.text("/walljump reload ").color(NamedTextColor.WHITE).clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/walljump reload")).hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(Component.text("Click me to reload the plugin config").color(NamedTextColor.YELLOW)))
+                .append(Component.text("Reload the plugin config ").color(NamedTextColor.YELLOW));
+        sender.sendMessage(helpMessage3);
+        Component helpMessage4 = Component.text("/walljump toggle [on|off] ").color(NamedTextColor.WHITE).clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/walljump toggle")).hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(Component.text("Click me to toggle wall jump on or off").color(NamedTextColor.YELLOW)))
+                .append(Component.text("Toggle wall jump on or off ").color(NamedTextColor.YELLOW));
+        sender.sendMessage(helpMessage4);
+        return true;
+    }
+
+    private boolean handleReloadCommand(@NotNull CommandSender sender) {
+        config.reload();
+        Component message = Component.text("Config reloaded!").color(NamedTextColor.YELLOW);
+        sender.sendMessage(message);
+        return true;
+    }
+
+    private boolean handleToggleCommand(@NotNull Player player, String arg) {
+        WPlayer wPlayer = WallJump.getInstance().getPlayerManager().getWPlayer(player);
+        if (arg == null) {
+            // Toggle command without specifying on or off
+            Component message = Component.text("You must specify a state!").color(NamedTextColor.RED).append(Component.newline())
+                    .append(Component.text("Usage: /walljump toggle [on|off]").color(NamedTextColor.YELLOW));
+            player.sendMessage(message);
+            return false;
+        } else if (arg.equalsIgnoreCase("on")) {
+            wPlayer.enabled = true;
+            Component message = Component.text("Wall jump enabled!").color(NamedTextColor.YELLOW);
+            player.sendMessage(message);
+            return true;
+        } else if (arg.equalsIgnoreCase("off")) {
+            wPlayer.enabled = false;
+            Component message = Component.text("Wall jump disabled!").color(NamedTextColor.YELLOW);
+            player.sendMessage(message);
+            return true;
+        } else {
+            // Unknown argument for toggle command
+            Component message = Component.text("Unknown command!").color(NamedTextColor.RED).append(Component.newline())
+                    .append(Component.text("Usage: /walljump toggle [on|off]").color(NamedTextColor.YELLOW));
+            player.sendMessage(message);
+            return false;
+        }
+    }
+
+    private boolean handleWallJumpInfo(@NotNull CommandSender sender) {
+        Component message = Component.text("WallJump version " + WallJump.getInstance().getDescription().getVersion() + " by Monster_What").color(NamedTextColor.YELLOW);
+        sender.sendMessage(message);
+        return true;
+    }
+
 
     // The tab completer
     @Override
@@ -108,7 +124,6 @@ public class WallJumpCommand implements CommandExecutor, TabExecutor {
                 // Check if the sender has the permission to reload the config
                 if(sender.hasPermission("walljump.reload"))
                     arguments.add("reload");
-                // Check if the sender is a player and the toggle command is enabled
                 if(config.getBoolean("toggleCommand")) {
                     arguments.add("on");
                     arguments.add("off");
@@ -123,7 +138,6 @@ public class WallJumpCommand implements CommandExecutor, TabExecutor {
         }
     }
 
-    // Get the matching arguments
     private List<String> getMatchingArgument(String arg, List<String> elements) {
         try {
             List<String> list = new ArrayList<>();

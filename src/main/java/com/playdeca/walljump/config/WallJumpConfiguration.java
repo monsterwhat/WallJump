@@ -13,13 +13,11 @@ import java.util.*;
 // This class is used to load the config
 public class WallJumpConfiguration extends YamlConfiguration {
 
-    // The config file and the data
     private final File configFile;
     // The data is used to cache the values
     private Map<String, Object> data;
 
     public WallJumpConfiguration(String fileName) {
-            // Call the super constructor
             super();
 
             // Get the plugin and the config file
@@ -40,23 +38,19 @@ public class WallJumpConfiguration extends YamlConfiguration {
             assert defaultConfigInputStream != null;
             InputStreamReader defaultConfigReader = new InputStreamReader(defaultConfigInputStream);
             setDefaults(YamlConfiguration.loadConfiguration(defaultConfigReader));
-            Bukkit.getLogger().info("Config loaded!");
     }
 
-    // This method is used to reload the config
     public void reload() {
         try {
             // Load the config
             load(configFile);
             // Clear the data
             data = new HashMap<>();
-            Bukkit.getLogger().info("Config reloaded!");
         } catch (Exception e) {
             Bukkit.getLogger().warning("An error occurred while reloading the config.");
         }
     }
 
-    // This method is used to save the config
     public void save() {
         try {
             save(configFile);
@@ -66,7 +60,6 @@ public class WallJumpConfiguration extends YamlConfiguration {
         }
     }
 
-    // This method is used to get a string list from the config
     public List<Material> getMaterialList(String path) {
         try {
             if(data.containsKey(path)) {
@@ -87,7 +80,6 @@ public class WallJumpConfiguration extends YamlConfiguration {
         }
     }
 
-    // This method is used to get a world list from the config
     public List<World> getWorldList(String path) {
         try {
             if(data.containsKey(path)) {

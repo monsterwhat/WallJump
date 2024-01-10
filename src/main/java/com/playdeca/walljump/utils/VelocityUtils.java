@@ -7,7 +7,6 @@ import org.bukkit.util.Vector;
 // This class is used to push a player in the direction he is looking
 public class VelocityUtils {
 
-    // Push the player in front of him
     // horizontalPower is the power of the horizontal push
     // verticalPower is the power of the vertical push
     // The vertical push is added to the player's current vertical velocity
