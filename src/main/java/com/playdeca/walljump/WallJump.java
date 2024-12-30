@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Objects;
+import java.util.logging.Level;
 
 // This class is the main class of the plugin
 public final class WallJump extends JavaPlugin {
@@ -71,7 +72,7 @@ public final class WallJump extends JavaPlugin {
 
         }catch (Exception e) {
             Bukkit.getLogger().info("WallJump has failed to enable!");
-            Bukkit.getLogger().info("Error: " + e.getMessage());
+            Bukkit.getLogger().log(Level.INFO, "Error: {0}", e.getMessage());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.playdeca.walljump.utils;
 
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,26 +8,34 @@ import java.util.regex.Pattern;
 public class BukkitUtils {
 
     // This is the version of the server
-    public static final int currentVersionInt = Version.valueOf("V" + getVersion().replace(".", "_")).versionInt;
+   public static final int currentVersionInt;
+    static {
+        String parsedVersion = getVersion().replace(".", "_");
+        Version version;
+        try {
+            version = Version.valueOf("V" + parsedVersion);
+        } catch (IllegalArgumentException e) {
+            version = Version.V1_20; // Default to the latest supported version
+            Bukkit.getLogger().log(Level.WARNING, "WallJump does not recognize server version: {0}", parsedVersion);
+        }
+        currentVersionInt = version.versionInt;
+    }
 
     /**
      * Returns the Minecraft version in use by the server.
-     * If it cannot be determined, returns the string "1.20" (latest version).
+     * If it cannot be determined, returns the string "1.21" (latest version).
      * @return A string representing the Minecraft version in use.
      */
+      
     private static String getVersion() {
-        // Define a regex pattern to match the Minecraft version in the server's version string
-        Pattern pattern = Pattern.compile("MC: [0-9]{1,2}\\.[0-9]{1,2}");
-        // Use the pattern to find a match in the server's version string
+        Pattern pattern = Pattern.compile("MC: ([0-9]+\\.[0-9]+)");
         Matcher matcher = pattern.matcher(Bukkit.getVersion());
-        // If a match is found, extract the Minecraft version and return it
-        if(matcher.find()) {
-            return matcher.group().replace("MC: ", "");
+        if (matcher.find()) {
+            return matcher.group(1); // Extract only the major and minor versions
         }
-        // If no match is found, return a default value of "1.20"
-        return "1.20";
+        return "1.21"; // Default fallback
     }
-
+ 
 
     /**
      * Checks whether the server is running Paper.

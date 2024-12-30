@@ -6,12 +6,14 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import org.bukkit.configuration.InvalidConfigurationException;
 
 // This class is used to load the config
-public class WallJumpConfiguration extends YamlConfiguration {
+public final class WallJumpConfiguration extends YamlConfiguration {
 
     private final File configFile;
     // The data is used to cache the values
@@ -46,7 +48,7 @@ public class WallJumpConfiguration extends YamlConfiguration {
             load(configFile);
             // Clear the data
             data = new HashMap<>();
-        } catch (Exception e) {
+        } catch (IOException | InvalidConfigurationException e) {
             Bukkit.getLogger().warning("An error occurred while reloading the config.");
         }
     }
@@ -55,7 +57,7 @@ public class WallJumpConfiguration extends YamlConfiguration {
         try {
             save(configFile);
             Bukkit.getLogger().info("Config saved!");
-        } catch(Exception e) {
+        } catch(IOException e) {
             Bukkit.getLogger().warning("An error occurred while saving the config.");
         }
     }
