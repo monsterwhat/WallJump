@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class WPlayer {
 
@@ -125,8 +126,8 @@ public class WPlayer {
             // cancel the task for resetting wall jumping if the player wall jumps
             if (stopWallJumpingTask != null)
                 stopWallJumpingTask.cancel();
-        }catch (Exception e){
-           Bukkit.getLogger().warning("Failed to start wall jump for player " + player.getName() + "!");
+        }catch (IllegalArgumentException | IllegalStateException e){
+           Bukkit.getLogger().log(Level.WARNING, "Failed to start wall jump for player {0}!", player.getName());
         }
     }
 
@@ -169,8 +170,8 @@ public class WPlayer {
 
             // reset wall jumping after 2.4 seconds
             stopWallJumpingTask = Bukkit.getScheduler().runTaskLaterAsynchronously(WallJump.getInstance(), this::reset, 24);
-        }catch (Exception e){
-            Bukkit.getLogger().warning("Failed to end wall jump for player " + player.getName() + "!");
+        }catch (IllegalArgumentException | IllegalStateException e){
+            Bukkit.getLogger().log(Level.WARNING, "Failed to end wall jump for player {0}!", player.getName());
         }
     }
 
@@ -192,8 +193,8 @@ public class WPlayer {
                 WallJumpResetEvent event = new WallJumpResetEvent(this);
                 Bukkit.getPluginManager().callEvent(event);
             });
-        }catch (Exception e){
-           Bukkit.getLogger().warning("Failed to reset wall jump for player " + player.getName() + "!");
+        }catch (IllegalArgumentException e){
+           Bukkit.getLogger().log(Level.WARNING, "Failed to reset wall jump for player {0}!", player.getName());
         }
     }
 
@@ -236,7 +237,7 @@ public class WPlayer {
             boolean reverseWorldBlacklist = config.getBoolean("reversedWorldBlacklist");
             return (reverseWorldBlacklist || !inBlacklistedWorld) && (!reverseWorldBlacklist || inBlacklistedWorld);
         }catch (Exception e){
-            Bukkit.getLogger().warning("Failed to check if player " + player.getName() + " can wall jump!");
+            Bukkit.getLogger().log(Level.WARNING, "Failed to check if player {0} can wall jump!", player.getName());
             return false;
         }
     }

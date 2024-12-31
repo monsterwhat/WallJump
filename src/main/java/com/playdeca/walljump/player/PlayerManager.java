@@ -1,8 +1,7 @@
 package com.playdeca.walljump.player;
 
 import com.playdeca.walljump.WallJump;
-import com.playdeca.walljump.config.WallJumpConfiguration;
-import org.bukkit.Bukkit;
+import com.playdeca.walljump.config.WallJumpConfiguration; 
 import org.bukkit.entity.Player;
 import java.util.Collection;
 import java.util.HashMap;

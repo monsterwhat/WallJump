@@ -4,11 +4,11 @@ import com.playdeca.walljump.enums.WallFace;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.block.Block;
+import org.bukkit.Particle; 
 import org.bukkit.entity.Player;
 
 import com.playdeca.walljump.utils.BukkitUtils.Version;
+import java.util.logging.Level;
 
 public class EffectUtils {
 
@@ -30,7 +30,7 @@ public class EffectUtils {
                     0.2f // The Z-axis offset of the particles
             );
         }catch (Exception e) {
-            Bukkit.getLogger().warning("Failed to spawn sliding particles for player " + player.getName() + "!");
+            Bukkit.getLogger().log(Level.WARNING, "Failed to spawn sliding particles for player {0}!", player.getName());
             Bukkit.getLogger().warning(e.getMessage());
         }
     }
@@ -47,7 +47,7 @@ public class EffectUtils {
                     pitch // Set the pitch of the sound
             );
         }catch (Exception e){
-            Bukkit.getLogger().warning("Failed to play wall jump sound for player " + player.getName() + "!");
+            Bukkit.getLogger().log(Level.WARNING, "Failed to play wall jump sound for player {0}!", player.getName());
             Bukkit.getLogger().warning(e.getMessage());
         }
     }

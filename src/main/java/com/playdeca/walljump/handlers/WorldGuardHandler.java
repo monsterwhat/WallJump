@@ -1,205 +1,170 @@
 package com.playdeca.walljump.handlers;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.domains.Association;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.association.Associables;
-import com.sk89q.worldguard.protection.association.RegionAssociable;
-import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.playdeca.walljump.WallJump;
+import com.sk89q.worldguard.domains.Association;
+import com.sk89q.worldguard.protection.association.RegionAssociable;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
+
+import java.lang.reflect.*;
+import java.util.logging.Level;
+import org.bukkit.World;
 
 public class WorldGuardHandler {
 
+    private static final String WALL_JUMP_FLAG = "wall-jump";
     private final Plugin owningPlugin = WallJump.getPlugin(WallJump.class);
-    private Object worldGuard = null;
-    private WorldGuardPlugin worldGuardPlugin = null;
-    private Object regionContainer = null;
-    private Method regionContainerGetMethod = null;
-    private Method worldAdaptMethod = null;
-    private Method regionManagerGetMethod = null;
-    private Constructor<?> vectorConstructor = null;
-    private Method vectorConstructorAsAMethodBecauseWhyNot = null;
+    private WorldGuardPlugin worldGuardPlugin;
+    private Object worldGuard;
+    private Object regionContainer;
+    private Method regionContainerGetMethod;
+    private Method worldAdaptMethod;
+    private Method regionManagerGetMethod;
+    private Constructor<?> vectorConstructor;
     private boolean initialized = false;
-
     public static StateFlag ALLOW_WALL_JUMP;
 
-    public boolean isEnabled() {
-        return worldGuardPlugin != null;
-    }
-
-    public WorldGuardHandler(Plugin plugin, Plugin owningPlugin) {
-        if (plugin instanceof WorldGuardPlugin) {
-            worldGuardPlugin = (WorldGuardPlugin)plugin;
-
+    public WorldGuardHandler(Plugin plugin) {
+        if (plugin instanceof WorldGuardPlugin worldGuardPlugin1) {
+            this.worldGuardPlugin = worldGuardPlugin1;
+            initializeWorldGuard();
             try {
-                Class<?> worldGuardClass = Class.forName("com.sk89q.worldguard.WorldGuard");
-                Method getInstanceMethod = worldGuardClass.getMethod("getInstance");
-                worldGuard = getInstanceMethod.invoke(null);
-                owningPlugin.getLogger().info("Found WorldGuard 7+");
-            } catch (Exception ex) {
-                owningPlugin.getLogger().info("Found WorldGuard <7");
-            }
-
-            try {
-                owningPlugin.getLogger().info("Pre-check for WorldGuard custom flag registration");
                 registerFlag();
-            } catch (NoSuchMethodError incompatible) {
-                owningPlugin.getLogger().log(Level.WARNING, "NOFLAGS", incompatible);
-                // Ignored, will follow up in checkFlagSupport
             } catch (Throwable ex) {
-                owningPlugin.getLogger().log(Level.WARNING, "Unexpected error setting up custom flags, please make sure you are on WorldGuard 6.2 or above", ex);
+                owningPlugin.getLogger().log(Level.WARNING, "Failed to register WorldGuard custom flags", ex);
             }
         }
     }
 
-    protected RegionAssociable getAssociable(Player player) {
+    private void initializeWorldGuard() {
         try {
-            RegionAssociable associable;
-            if (player == null) {
-                associable = Associables.constant(Association.NON_MEMBER);
-            } else {
-                associable = worldGuardPlugin.wrapPlayer(player);
-            }
-            return associable;
-        }catch (Exception e){
-            Bukkit.getLogger().warning("Error getting Region associable");
-            return null;
+            Class<?> worldGuardClass = Class.forName("com.sk89q.worldguard.WorldGuard");
+            Method getInstanceMethod = worldGuardClass.getMethod("getInstance");
+            worldGuard = getInstanceMethod.invoke(null);
+            owningPlugin.getLogger().info("Found WorldGuard 7+");
+        } catch (Exception ex) {
+            owningPlugin.getLogger().info("Found WorldGuard <7");
         }
     }
 
     private void registerFlag() {
-        FlagRegistry registry;
+        if (worldGuard == null) return;
         try {
-            Method getFlagRegistryMethod = worldGuard.getClass().getMethod("getFlagRegistry");
-            registry = (FlagRegistry)getFlagRegistryMethod.invoke(worldGuard);
-            try {
-                StateFlag flag = new StateFlag("wall-jump", WallJump.getInstance().getConfig().getBoolean("worldGuardFlagDefault"));
-                registry.register(flag);
-                ALLOW_WALL_JUMP = flag;
-            } catch (Exception e) {
-                Flag<?> existing = registry.get("wall-jump");
-                if (existing instanceof StateFlag) {
-                    ALLOW_WALL_JUMP = (StateFlag) existing;
-                }
-            }
+            FlagRegistry registry = (FlagRegistry) invokeMethod(worldGuard, "getFlagRegistry");
+            StateFlag flag = new StateFlag(WALL_JUMP_FLAG, WallJump.getInstance().getConfig().getBoolean("worldGuardFlagDefault"));
+            registry.register(flag);
+            ALLOW_WALL_JUMP = flag;
+        } catch (FlagConflictException e) {
+            ALLOW_WALL_JUMP = (StateFlag) getExistingFlag("wall-jump");
         } catch (Exception ex) {
-            Bukkit.getLogger().log(Level.WARNING, "Failed to register WorldGuard custom flags", ex);
+            owningPlugin.getLogger().log(Level.WARNING, "Failed to register custom flag", ex);
         }
     }
 
-    private void initialize() {
-        if (!initialized) {
-            initialized = true;
-            // Super hacky reflection to deal with differences in WorldGuard 6 and 7+
-            if (worldGuard != null) {
-                try {
-                    Method getPlatFormMethod = worldGuard.getClass().getMethod("getPlatform");
-                    Object platform = getPlatFormMethod.invoke(worldGuard);
-                    Method getRegionContainerMethod = platform.getClass().getMethod("getRegionContainer");
-                    regionContainer = getRegionContainerMethod.invoke(platform);
-                    Class<?> worldEditWorldClass = Class.forName("com.sk89q.worldedit.world.World");
-                    Class<?> worldEditAdapterClass = Class.forName("com.sk89q.worldedit.bukkit.BukkitAdapter");
-                    worldAdaptMethod = worldEditAdapterClass.getMethod("adapt", World.class);
-                    regionContainerGetMethod = regionContainer.getClass().getMethod("get", worldEditWorldClass);
-                    //registering custom flag
-
-                } catch (Exception ex) {
-                    owningPlugin.getLogger().log(Level.WARNING, "Failed to bind to WorldGuard, integration will not work!", ex);
-                    regionContainer = null;
-                    return;
-                }
-            } else {
-                //regionContainer = worldGuardPlugin.getRegionContainer();
-                try {
-                    regionContainerGetMethod = regionContainer.getClass().getMethod("get", World.class);
-                } catch (Exception ex) {
-                    owningPlugin.getLogger().log(Level.WARNING, "Failed to bind to WorldGuard, integration will not work!", ex);
-                    regionContainer = null;
-                    return;
-                }
-            }
-
-            // Ugh guys, API much?
-            try {
-                Class<?> vectorClass = Class.forName("com.sk89q.worldedit.Vector");
-                vectorConstructor = vectorClass.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE);
-                regionManagerGetMethod = RegionManager.class.getMethod("getApplicableRegions", vectorClass);
-            } catch (Exception ex) {
-                try {
-                    Class<?> vectorClass = Class.forName("com.sk89q.worldedit.math.BlockVector3");
-                    vectorConstructorAsAMethodBecauseWhyNot = vectorClass.getMethod("at", Double.TYPE, Double.TYPE, Double.TYPE);
-                    regionManagerGetMethod = RegionManager.class.getMethod("getApplicableRegions", vectorClass);
-                } catch (Exception error) {
-                    owningPlugin.getLogger().log(Level.WARNING, "Failed to bind to WorldGuard (no Vector class?), integration will not work!", ex);
-                    regionContainer = null;
-                    return;
-                }
-            }
-
-            if (regionContainer == null) {
-                owningPlugin.getLogger().warning("Failed to find RegionContainer, WorldGuard integration will not function!");
-            }
+    private Flag<?> getExistingFlag(String flagName) {
+        try {
+            FlagRegistry registry = (FlagRegistry) invokeMethod(worldGuard, "getFlagRegistry");
+            return registry.get(flagName);
+        } catch (Exception e) {
+            owningPlugin.getLogger().log(Level.WARNING, "Error fetching existing flag", e);
+            return null;
         }
     }
 
-    private RegionManager getRegionManager(World world) {
-        initialize();
-        if (regionContainer == null || regionContainerGetMethod == null) return null;
-        RegionManager regionManager = null;
+    private Object invokeMethod(Object target, String methodName, Object... args) {
         try {
-            if (worldAdaptMethod != null) {
-                Object worldEditWorld = worldAdaptMethod.invoke(null, world);
-                regionManager = (RegionManager)regionContainerGetMethod.invoke(regionContainer, worldEditWorld);
-            } else {
-                regionManager = (RegionManager)regionContainerGetMethod.invoke(regionContainer, world);
-            }
-        } catch (Exception ex) {
-            owningPlugin.getLogger().log(Level.WARNING, "An error occurred looking up a WorldGuard RegionManager", ex);
+            Method method = target.getClass().getMethod(methodName, getParameterTypes(args));
+            return method.invoke(target, args);
+        } catch (IllegalAccessException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
+            owningPlugin.getLogger().log(Level.WARNING, "Error invoking method " + methodName, ex);
+            return null;
         }
-        return regionManager;
     }
 
-    private ApplicableRegionSet getRegionSet(Location location) {
-        RegionManager regionManager = getRegionManager(location.getWorld());
-        if (regionManager == null) return null;
-        // The Location version of this method is gone in 7.0
-        // Oh, and then they also randomly changed the Vector class at some point without even a version bump.
-        // So awesome!
-        try {
-            Object vector = vectorConstructorAsAMethodBecauseWhyNot == null
-                    ? vectorConstructor.newInstance(location.getX(), location.getY(), location.getZ())
-                    : vectorConstructorAsAMethodBecauseWhyNot.invoke(null, location.getX(), location.getY(), location.getZ());
-            return (ApplicableRegionSet)regionManagerGetMethod.invoke(regionManager, vector);
-        } catch (Exception ex) {
-            owningPlugin.getLogger().log(Level.WARNING, "An error occurred looking up a WorldGuard ApplicableRegionSet", ex);
+    private Class<?>[] getParameterTypes(Object[] args) {
+        if (args == null) return new Class<?>[0];
+        Class<?>[] paramTypes = new Class<?>[args.length];
+        for (int i = 0; i < args.length; i++) {
+            paramTypes[i] = args[i].getClass();
         }
-        return null;
+        return paramTypes;
     }
 
     public boolean canWallJump(Player player) {
         try {
             Location location = player.getLocation();
             if (worldGuardPlugin == null) return true;
-
-            ApplicableRegionSet checkSet = getRegionSet(location);
-            if (checkSet == null) return true;
-
-            return checkSet.queryState(getAssociable(player), ALLOW_WALL_JUMP) != StateFlag.State.DENY;
-        }catch (Exception e){
+            ApplicableRegionSet regionSet = getRegionSet(location);
+            return regionSet == null || regionSet.queryState(getAssociable(player), ALLOW_WALL_JUMP) != StateFlag.State.DENY;
+        } catch (Exception e) {
             Bukkit.getLogger().warning("Error checking if player can wall jump");
             return true;
+        }
+    }
+
+    private RegionAssociable getAssociable(Player player) {
+        try {
+            if (player == null) return Associables.constant(Association.NON_MEMBER);
+            return worldGuardPlugin.wrapPlayer(player);
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("Error getting Region associable");
+            return null;
+        }
+    }
+
+    private void initialize() {
+        if (initialized) return;
+        initialized = true;
+        try {
+            setupReflectionMethods();
+        } catch (Exception ex) {
+            owningPlugin.getLogger().log(Level.WARNING, "Failed to initialize WorldGuard integration", ex);
+        }
+    }
+
+    private void setupReflectionMethods() throws Exception {
+        Class<?> worldEditWorldClass = Class.forName("com.sk89q.worldedit.world.World");
+        Class<?> worldEditAdapterClass = Class.forName("com.sk89q.worldedit.bukkit.BukkitAdapter");
+        worldAdaptMethod = worldEditAdapterClass.getMethod("adapt", World.class);
+
+        regionContainerGetMethod = regionContainer.getClass().getMethod("get", worldEditWorldClass);
+
+        Class<?> vectorClass = Class.forName("com.sk89q.worldedit.Vector");
+        vectorConstructor = vectorClass.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE);
+        regionManagerGetMethod = RegionManager.class.getMethod("getApplicableRegions", vectorClass);
+    }
+
+    private RegionManager getRegionManager(World world) {
+        initialize();
+        if (regionContainer == null || regionContainerGetMethod == null) return null;
+        try {
+            Object worldEditWorld = worldAdaptMethod != null ? worldAdaptMethod.invoke(null, world) : world;
+            return (RegionManager) regionContainerGetMethod.invoke(regionContainer, worldEditWorld);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            owningPlugin.getLogger().log(Level.WARNING, "An error occurred looking up a WorldGuard RegionManager", ex);
+            return null;
+        }
+    }
+
+    private ApplicableRegionSet getRegionSet(Location location) {
+        RegionManager regionManager = getRegionManager(location.getWorld());
+        if (regionManager == null) return null;
+        try {
+            Object vector = vectorConstructor.newInstance(location.getX(), location.getY(), location.getZ());
+            return (ApplicableRegionSet) regionManagerGetMethod.invoke(regionManager, vector);
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException | InvocationTargetException ex) {
+            owningPlugin.getLogger().log(Level.WARNING, "An error occurred looking up a WorldGuard ApplicableRegionSet", ex);
+            return null;
         }
     }
 }

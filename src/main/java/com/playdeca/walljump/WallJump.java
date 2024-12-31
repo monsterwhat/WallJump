@@ -84,7 +84,7 @@ public final class WallJump extends JavaPlugin {
 
         Plugin worldGuardPlugin = getServer().getPluginManager().getPlugin("WorldGuard");
         if (worldGuardPlugin != null) {
-            worldGuard = new WorldGuardHandler(worldGuardPlugin, this);
+            worldGuard = new WorldGuardHandler(worldGuardPlugin);
         }
     }
 

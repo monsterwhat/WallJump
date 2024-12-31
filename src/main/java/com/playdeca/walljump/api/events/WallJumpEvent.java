@@ -31,6 +31,7 @@ public abstract class WallJumpEvent extends PlayerEvent implements Cancellable {
     @NotNull
     public WPlayer getWPlayer() {return wplayer;}
     @NotNull
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

@@ -6,6 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -78,7 +79,7 @@ public class NmsUtils {
 
             // Convert the key to a Bukkit Sound object and return it
             return Sound.valueOf(key.replace(".", "_").toUpperCase());
-        } catch (Exception Error) {
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchFieldException | NoSuchMethodException | SecurityException | InvocationTargetException Error) {
             Bukkit.getLogger().warning("An error occurred while getting the sound for a block.");
             // If an error occurs, return the default sound for a stone block
             return Sound.BLOCK_STONE_PLACE;
